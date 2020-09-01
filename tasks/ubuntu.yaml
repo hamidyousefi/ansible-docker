@@ -1,0 +1,20 @@
+---
+- name: adding docker gpg key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: adding docker repository
+  apt_repository:
+    repo: 'deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable'
+    update_cache: yes
+    state: present
+    filename: docker
+
+- name: installing main packages
+  apt:
+    force_apt_get: yes
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io

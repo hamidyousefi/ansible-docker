@@ -1,6 +1,22 @@
 ---
+- name: installing necessary packages
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg-agent
+      - software-properties-common
+    update_cache: yes
+    state: present
+    force_apt_get: yes
+  when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
+
 - include: debian.yaml
   when: ansible_distribution == 'Debian'
+
+- include: ubuntu.yaml
+  when: ansible_distribution == 'Ubuntu'
 
 - name: installing docker compose
   get_url:
@@ -9,48 +25,39 @@
     owner: root
     group: root
     mode: '0655'
+  when: packages.docker-compose
 
-- name: creating DOCKER-USER chain
-  shell: iptables -n --list DOCKER-USER >/dev/null 2>&1 || iptables -N DOCKER-USER
-  tags:
-    - iptables
+- name: configuring iptables
+  block:
+    - name: creating DOCKER-USER chain
+      shell: iptables -n --list DOCKER-USER >/dev/null 2>&1 || iptables -N DOCKER-USER
 
-- name: creating DOCKER-WHITELIST chain
-  shell: iptables -n --list DOCKER-WHITELIST >/dev/null 2>&1 || iptables -N DOCKER-WHITELIST
-  tags:
-    - iptables
+    - name: creating DOCKER-WHITELIST chain
+      shell: iptables -n --list DOCKER-WHITELIST >/dev/null 2>&1 || iptables -N DOCKER-WHITELIST
 
-- name: flushing existing DOCKER-WHITELIST chain
-  iptables:
-    chain: DOCKER-WHITELIST
-    flush: yes
-  tags:
-    - iptables
+    - name: flushing existing DOCKER-WHITELIST chain
+      iptables:
+        chain: DOCKER-WHITELIST
+        flush: yes
 
-- name: dropping all other packets
-  iptables:
-    chain: DOCKER-WHITELIST
-    jump: DROP
-  tags:
-    - iptables
+    - name: dropping all other packets
+      iptables:
+        chain: DOCKER-WHITELIST
+        jump: DROP
 
-- name: adding DOCKER-WHITELIST into DOCKER-USER
-  iptables:
-    chain: DOCKER-USER
-    jump: DOCKER-WHITELIST
-    action: insert
-  register: change
-  tags:
-    - iptables
+    - name: adding DOCKER-WHITELIST into DOCKER-USER
+      iptables:
+        chain: DOCKER-USER
+        jump: DOCKER-WHITELIST
+        action: insert
+      register: change
 
-- name: persisting created basic ip4tables rules
-  shell: iptables-save > /etc/iptables/rules.v4
-  when: change.changed
-  tags:
-    - iptables
+    - name: persisting created basic ip4tables rules
+      shell: iptables-save > /etc/iptables/rules.v4
+      when: change.changed
 
-- name: persisting created basic ip6tables rules
-  shell: ip6tables-save > /etc/iptables/rules.v6
-  when: change.changed
-  tags:
-    - iptables
+    - name: persisting created basic ip6tables rules
+      shell: ip6tables-save > /etc/iptables/rules.v6
+      when: change.changed
+  when: configure.iptables
+  tags: iptables
