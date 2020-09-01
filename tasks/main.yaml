@@ -18,14 +18,14 @@
 - include: ubuntu.yaml
   when: ansible_distribution == 'Ubuntu'
 
-- name: installing docker compose
+- name: installing compose extensions
   get_url:
     url: https://github.com/docker/compose/releases/download/1.25.0/docker-compose-Linux-x86_64
     dest: /usr/local/bin/docker-compose
     owner: root
     group: root
     mode: '0655'
-  when: packages.docker-compose
+  when: extensions.compose
 
 - name: configuring iptables
   block:
