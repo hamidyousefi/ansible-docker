@@ -1,6 +1,0 @@
----
-extensions:
-  compose: yes
-
-configure:
-  iptables: no

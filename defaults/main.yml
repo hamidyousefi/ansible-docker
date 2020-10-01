@@ -1,0 +1,8 @@
+---
+extensions:
+  - compose:
+    version: 1.27.4
+
+configure:
+  compose: no
+  iptables: no
