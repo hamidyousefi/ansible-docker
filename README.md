@@ -30,10 +30,21 @@ define which version you are going to use just by replacing it with something li
 You can find the versions list and their changelogs from [releases page](https://github.com/hamidyousefi/ansible-docker/releases).
 
 ## Additional Extensions and Configurations
-I added two specific extra feature to this role. `docker-compose` and `iptables` can be set up easily just
+I added three specific extra feature to this role. `docker-compose` and `iptables` can be set up easily just
 by adding the below block in your `group_vars` related YAML file:
 ```yaml
 configure:
   compose: yes
   iptables: yes
+  proxy: no
+```
+
+## HTTP(S) Proxies
+If you have to configure http and (or) https proxy on your docker, you can change
+the ```proxy``` parameter in above section from ```no``` to ```yes```, and add below
+variables into necessary host or group variables.
+```yaml
+docker_proxy:
+  http: 'http://your-server:80'
+  https: 'https://your-server:443'
 ```

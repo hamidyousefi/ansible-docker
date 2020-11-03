@@ -27,5 +27,24 @@
     mode: '0655'
   when: configure.compose
 
+- name: configure proxy if defined
+  block:
+    - name: create systemd necessary directory
+      file:
+        path: /etc/systemd/system/docker.service.d
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: create systemd service config file
+      template:
+        src: proxy.conf.j2
+        dest: /etc/systemd/system/docker.service.d/proxy.conf
+        owner: root
+        group: root
+        mode: '0644'
+  when: configure.proxy
+
 - include: iptables.yml
   when: configure.iptables

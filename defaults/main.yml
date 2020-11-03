@@ -6,3 +6,8 @@ extensions:
 configure:
   compose: no
   iptables: no
+  proxy: no
+
+docker_proxy:
+  http: 'http://server:80'
+  https: 'https://server:443'
