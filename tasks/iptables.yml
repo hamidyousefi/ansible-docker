@@ -12,11 +12,6 @@
         chain: DOCKER-WHITELIST
         flush: yes
 
-    - name: dropping all other packets
-      iptables:
-        chain: DOCKER-WHITELIST
-        jump: DROP
-
     - name: adding DOCKER-WHITELIST into DOCKER-USER
       iptables:
         chain: DOCKER-USER
@@ -24,12 +19,11 @@
         action: insert
       register: change
 
-    - name: persisting created basic ip4tables rules
-      shell: iptables-save > /etc/iptables/rules.v4
-      when: change.changed
-
-    - name: persisting created basic ip6tables rules
-      shell: ip6tables-save > /etc/iptables/rules.v6
+    - name: persisting created basic iptables rules
+      shell: "{{ item }}"
+      with_items:
+        - iptables-save > /etc/iptables/rules.v4
+        - ip6tables-save > /etc/iptables/rules.v6
       when: change.changed
   when: configure.iptables
   tags: iptables
