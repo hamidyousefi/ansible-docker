@@ -2,10 +2,10 @@
 - name: configuring iptables
   block:
     - name: creating DOCKER-USER chain
-      shell: iptables -n --list DOCKER-USER >/dev/null 2>&1 || iptables -N DOCKER-USER
+      shell: set -o pipefail && iptables -n --list DOCKER-USER >/dev/null 2>&1 || iptables -N DOCKER-USER
 
     - name: creating DOCKER-WHITELIST chain
-      shell: iptables -n --list DOCKER-WHITELIST >/dev/null 2>&1 || iptables -N DOCKER-WHITELIST
+      shell: set -o pipefail && iptables -n --list DOCKER-WHITELIST >/dev/null 2>&1 || iptables -N DOCKER-WHITELIST
 
     - name: flushing existing DOCKER-WHITELIST chain
       iptables:
@@ -20,7 +20,7 @@
       register: change
 
     - name: persisting created basic iptables rules
-      shell: "{{ item }}"
+      shell: "set -o pipefail && {{ item }}"
       with_items:
         - iptables-save > /etc/iptables/rules.v4
         - ip6tables-save > /etc/iptables/rules.v6
