@@ -7,6 +7,9 @@
       - curl
       - gnupg-agent
       - software-properties-common
+      - python3-docker
+      - gnupg2
+      - pass
     update_cache: yes
     state: present
     force_apt_get: yes
@@ -17,9 +20,6 @@
 
 - include: distributions/ubuntu.yml
   when: ansible_distribution == 'Ubuntu'
-
-- include: compose.yml
-  when: configure.compose
 
 - name: configure proxy if defined
   block:
@@ -38,7 +38,21 @@
         owner: root
         group: root
         mode: '0644'
+
+    - name: reload systemd daemon
+      systemd:
+        name: docker
+        daemon_reload: yes
+        state: restarted
   when: configure.proxy
+
+- name: login to specified registries
+  shell: "set -o pipefail && echo '{{ item.password }}' | docker login {{ item.url }} --username={{ item.username}} --password-stdin"
+  with_items: "{{ docker_registries }}"
+  when: docker_registries is defined
+
+- include: compose.yml
+  when: configure.compose
 
 - include: iptables.yml
   when: configure.iptables

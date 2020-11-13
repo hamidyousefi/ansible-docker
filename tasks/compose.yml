@@ -26,3 +26,9 @@
     mode: '0644'
   with_items: "{{ docker_compose }}"
   when: docker_compose is defined
+
+- name: bring up the containers based on docker composes
+  command: docker-compose up -d
+  args:
+    chdir: "{{ item.destination_path | dirname }}"
+  with_items: "{{ docker_compose }}"
