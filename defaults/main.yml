@@ -9,5 +9,5 @@ configure:
   proxy: no
 
 docker_proxy:
-  http: 'http://server:80'
-  https: 'https://server:443'
+  http: ''
+  https: ''

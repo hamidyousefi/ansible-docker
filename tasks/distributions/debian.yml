@@ -3,6 +3,9 @@
   apt_key:
     url: https://download.docker.com/linux/debian/gpg
     state: present
+  environment:
+    http_proxy: "{{ docker_proxy.http }}"
+    https_proxy: "{{ docker_proxy.https }}"
 
 - name: adding docker repository
   apt_repository:
@@ -10,6 +13,9 @@
     update_cache: yes
     state: present
     filename: docker
+  environment:
+    http_proxy: "{{ docker_proxy.http }}"
+    https_proxy: "{{ docker_proxy.https }}"
 
 - name: installing main packages
   apt:
@@ -18,3 +24,6 @@
       - docker-ce
       - docker-ce-cli
       - containerd.io
+  environment:
+    http_proxy: "{{ docker_proxy.http }}"
+    https_proxy: "{{ docker_proxy.https }}"
