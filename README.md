@@ -39,6 +39,15 @@ configure:
   proxy: no
 ```
 
+### Docker Compose
+You can add your `docker-compose.yml` files to the targeted remote host.
+For such a purpose, you only need to configure the below values in your group or host variables.
+```yaml
+docker_compose:
+  - template_path: where-the-template-placed/docker-compose.yml.j2
+    destination_path: path-to-place/docker-compose.yml
+```
+
 ## HTTP(S) Proxies
 If you have to configure http and (or) https proxy on your docker, you can change
 the ```proxy``` parameter in above section from ```no``` to ```yes```, and add below
