@@ -1,0 +1,14 @@
+---
+- name: add necessary users to docker group
+  user:
+    name: "{{ item.user }}"
+    groups:
+      - docker
+  with_items: "{{ docker_registries }}"
+
+- name: login to specified registries
+  shell: "echo '{{ item.password }}' | docker login {{ item.url }} --username={{ item.username }} --password-stdin"
+  become: yes
+  become_method: sudo
+  become_user: '{{ item.user }}'
+  with_items: "{{ docker_registries }}"

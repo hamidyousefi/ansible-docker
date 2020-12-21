@@ -1,58 +1,18 @@
 ---
-- name: installing necessary packages
-  apt:
-    name:
-      - apt-transport-https
-      - ca-certificates
-      - curl
-      - gnupg-agent
-      - software-properties-common
-      - python3-docker
-      - gnupg2
-      - pass
-    update_cache: yes
-    state: present
-    force_apt_get: yes
-  when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
-
-- include: distributions/debian.yml
-  when: ansible_distribution == 'Debian'
-
-- include: distributions/ubuntu.yml
-  when: ansible_distribution == 'Ubuntu'
+- include_tasks: 'distributions/{{ ansible_distribution | lower }}.yml'
 
 - name: configure proxy if defined
-  block:
-    - name: create systemd necessary directory
-      file:
-        path: /etc/systemd/system/docker.service.d
-        state: directory
-        owner: root
-        group: root
-        mode: '0755'
+  include_tasks: proxy.yml
+  when:
+    - docker_proxy.http is defined
+    - docker_proxy.http != ''
 
-    - name: create systemd service config file
-      template:
-        src: proxy.conf.j2
-        dest: /etc/systemd/system/docker.service.d/proxy.conf
-        owner: root
-        group: root
-        mode: '0644'
+- name: login to defined registries
+  include_tasks: registries.yml
+  when:
+    - docker_registries | length > 0
 
-    - name: reload systemd daemon
-      systemd:
-        name: docker
-        daemon_reload: yes
-        state: restarted
-  when: configure.proxy
-
-- name: login to specified registries
-  shell: "set -o pipefail && echo '{{ item.password }}' | docker login {{ item.url }} --username={{ item.username}} --password-stdin"
-  with_items: "{{ docker_registries }}"
-  when: docker_registries is defined
-
-- include: compose.yml
-  when: configure.compose
-
-- include: iptables.yml
-  when: configure.iptables
+- name: install and configure compose extension
+  include_tasks: compose.yml
+  when:
+    - extensions.compose is defined

@@ -1,0 +1,14 @@
+---
+docker_dependencies:
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - gnupg-agent
+  - software-properties-common
+  - python3-docker
+  - gnupg2
+
+docker_packages:
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io

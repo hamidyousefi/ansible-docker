@@ -1,13 +1,11 @@
 ---
 extensions:
-  - compose:
+  compose:
     version: 1.27.4
-
-configure:
-  compose: no
-  iptables: no
-  proxy: no
 
 docker_proxy:
   http: ''
   https: ''
+
+docker_compose: []
+docker_registries: []

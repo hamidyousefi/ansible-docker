@@ -1,8 +1,18 @@
 ---
+- name: installing necessary packages
+  apt:
+    name: "{{ docker_dependencies }}"
+    update_cache: yes
+    state: present
+    force_apt_get: yes
+
 - name: adding docker gpg key
   apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
     state: present
+  environment:
+    http_proxy: "{{ docker_proxy.http }}"
+    https_proxy: "{{ docker_proxy.https | default(docker_proxy.http) }}"
 
 - name: adding docker repository
   apt_repository:
@@ -10,11 +20,15 @@
     update_cache: yes
     state: present
     filename: docker
+  environment:
+    http_proxy: "{{ docker_proxy.http }}"
+    https_proxy: "{{ docker_proxy.https | default(docker_proxy.http) }}"
 
 - name: installing main packages
   apt:
+    name: "{{ docker_packages }}"
+    update_cache: yes
     force_apt_get: yes
-    name:
-      - docker-ce
-      - docker-ce-cli
-      - containerd.io
+  environment:
+    http_proxy: "{{ docker_proxy.http }}"
+    https_proxy: "{{ docker_proxy.https | default(docker_proxy.http) }}"

@@ -15,43 +15,52 @@ Right now, these OS distributions and releases are tested:
     - Focal
     
 ## How to Use It
-You can simply install this role on your machine by using the below command:
+You can simply install this role on your machine or hosts by using the below command:
 ```bash
 ansible-galaxy install hamidyousefi.docker
 ```
-Also if you defined your playbook, you can simply add below lines to your `roles/requirements.yml`.
+Also, if you defined your playbook, you can simply add below lines to your `roles/requirements.yml`.
 You can create this file if your playbook doesn't have it yet.
 ```yaml
 - name: hamidyousefi.docker
   version: master
 ```
-Of course `master` is the most updated version of this role. You should prefer to 
-define which version you are going to use just by replacing it with something like `v1.0.0`.
-You can find the versions list and their changelogs from [releases page](https://github.com/hamidyousefi/ansible-docker/releases).
+`master` is the most updated version of this role. You should 
+define which version you are going to use just by replacing it with something like `v1.3.0`.
+You can find the versions list and their changelogs from 
+[releases page](https://github.com/hamidyousefi/ansible-docker/releases).
 
-## Additional Extensions and Configurations
-I added three specific extra feature to this role. `docker-compose` and `iptables` can be set up easily just
-by adding the below block in your `group_vars` related YAML file:
+## Login to Registries
+This role can login the defined users into specified registries. Below code shows how it is possible:
 ```yaml
-configure:
-  compose: yes
-  iptables: yes
-  proxy: no
+docker_registries:
+  - user: linux-user
+    url: registry.domain.tld
+    username: registry-username
+    password: '123456'
 ```
 
+## Additional Extensions and Configurations
+I added few extra features to this role. `docker-compose` and or service level proxy can be set up easily just
+by adding the below block in your `group_vars` or `host_vars` related YAML files.
+
 ### Docker Compose
-You can add your `docker-compose.yml` files to the targeted remote host.
-For such a purpose, you only need to configure the below values in your group or host variables.
+Installing `docker-compose` will be installed by default. If you don't want to install it, add below block to
+your variable:
+```yaml
+extensions: []
+```
+Additionally, You can add your `docker-compose.yml` files to the targeted remote host and paths.
+Configure the below values in your group or host variables.
 ```yaml
 docker_compose:
   - template_path: where-the-template-placed/docker-compose.yml.j2
     destination_path: path-to-place/docker-compose.yml
 ```
 
-## HTTP(S) Proxies
-If you have to configure http and (or) https proxy on your docker, you can change
-the ```proxy``` parameter in above section from ```no``` to ```yes```, and add below
-variables into necessary host or group variables.
+### HTTP(S) Proxy
+If you want to configure http and (or) https proxy on your docker, you can add below
+variables:
 ```yaml
 docker_proxy:
   http: 'http://your-server:80'
