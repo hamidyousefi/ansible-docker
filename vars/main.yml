@@ -6,6 +6,7 @@ docker_dependencies:
   - gnupg-agent
   - software-properties-common
   - python3-docker
+  - pass
   - gnupg2
 
 docker_packages:
