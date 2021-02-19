@@ -7,5 +7,6 @@ docker_proxy:
   http: ''
   https: ''
 
+docker_mirror_registry: ''
 docker_compose: []
 docker_registries: []

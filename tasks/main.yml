@@ -16,3 +16,9 @@
   include_tasks: compose.yml
   when:
     - extensions.compose is defined
+
+- name: configure a mirror as default registry
+  include_tasks: registry.yml
+  when:
+    - docker_mirror_registry is defined
+    - docker_mirror_registry != ""

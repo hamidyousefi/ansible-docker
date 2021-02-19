@@ -1,0 +1,10 @@
+---
+- name: add daemon config file to docker
+  template:
+    src: daemon.json.j2
+    dest: /etc/docker/daemon.json
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - docker restart and daemon reload
