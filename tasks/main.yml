@@ -12,13 +12,18 @@
   when:
     - docker_registries | length > 0
 
-- name: install and configure compose extension
-  include_tasks: compose.yml
-  when:
-    - extensions.compose is defined
-
 - name: configure a mirror as default registry
   include_tasks: registry.yml
   when:
     - docker_mirror_registry is defined
     - docker_mirror_registry != ""
+
+- name: configure docker networks
+  include_tasks: networks.yml
+  when:
+    - docker_networks is defined
+
+- name: install and configure compose extension
+  include_tasks: compose.yml
+  when:
+    - extensions.compose is defined

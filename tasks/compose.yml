@@ -35,5 +35,6 @@
       args:
         chdir: "{{ item.destination_path | dirname }}"
       with_items: "{{ docker_compose }}"
+      when: item.executable is not defined or not item.executable
   when:
     - docker_compose | length > 0

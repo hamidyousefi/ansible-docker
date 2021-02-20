@@ -1,0 +1,4 @@
+---
+- name: create predefined docker networks
+  shell: 'docker network create {{ item }} || true'
+  with_items: "{{ docker_networks }}"

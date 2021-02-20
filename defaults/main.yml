@@ -10,3 +10,4 @@ docker_proxy:
 docker_mirror_registry: ''
 docker_compose: []
 docker_registries: []
+docker_networks: []
