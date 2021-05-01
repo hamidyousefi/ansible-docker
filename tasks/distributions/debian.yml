@@ -32,3 +32,9 @@
   environment:
     http_proxy: "{{ docker_proxy.http }}"
     https_proxy: "{{ docker_proxy.https | default(docker_proxy.http) }}"
+
+- name: add granted users to docker group
+  user:
+    name: '{{ item }}'
+    groups: docker
+  with_items: '{{ docker_granted_users }}'

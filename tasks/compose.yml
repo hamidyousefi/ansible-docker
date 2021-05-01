@@ -16,17 +16,17 @@
       file:
         path: "{{ item.destination_path | dirname }}"
         state: directory
-        owner: root
-        group: root
-        mode: '0644'
+        owner: "{{ item.owner | default('root') }}"
+        group: "{{ item.owner | default('root') }}"
+        mode: '0755'
       with_items: "{{ docker_compose }}"
 
     - name: transfer defined compose files based on the domain in srv directory
       template:
         src: "{{ item.template_path }}"
         dest: "{{ item.destination_path }}"
-        owner: root
-        group: root
+        owner: "{{ item.owner | default('root') }}"
+        group: "{{ item.owner | default('root') }}"
         mode: '0644'
       with_items: "{{ docker_compose }}"
 
